@@ -1,0 +1,367 @@
+{
+  "states": [
+    {
+      "id": "welcome",
+      "title": "Welcome",
+      "type": "dialogue",
+      "text": "Welcome to Allen Carr’s Easy Way companion, {{user.name}}. Together we will remove the desire to smoke—without will-power or fear.",
+      "next": [
+        { "target": "reasonsForm" }
+      ]
+    },
+    {
+      "id": "reasonsForm",
+      "title": "Your Reasons",
+      "type": "form",
+      "text": "What motivates you to quit? List up to three reasons (e.g., health, family, money).",
+      "next": [
+        { "target": "triggersForm", "condition": "form.completed === true" }
+      ]
+    },
+    {
+      "id": "triggersForm",
+      "title": "Smoking Triggers",
+      "type": "form",
+      "text": "When do you usually smoke? Select all that apply (after meals, with coffee, stress, driving, socialising…).",
+      "next": [
+        { "target": "profileForm", "condition": "form.completed === true" }
+      ]
+    },
+    {
+      "id": "profileForm",
+      "title": "Smoking Profile",
+      "type": "form",
+      "text": "A few details please:\n• Age\n• Cigarettes per day\n• Years smoked",
+      "next": [
+        { "target": "scheduleForm", "condition": "form.completed === true" }
+      ]
+    },
+    {
+      "id": "scheduleForm",
+      "title": "Session Schedule",
+      "type": "form",
+      "text": "What time of day suits you best for our 15-minute sessions? Which days of the week work?",
+      "next": [
+        { "target": "quitDateForm", "condition": "form.completed === true" }
+      ]
+    },
+    {
+      "id": "quitDateForm",
+      "title": "Choose Quit Date",
+      "type": "form",
+      "text": "Pick a quit date 3–10 days from today. You will keep smoking until that day—no pressure, no guilt.",
+      "next": [
+        { "target": "intakeSummary", "condition": "form.completed === true" }
+      ]
+    },
+    {
+      "id": "intakeSummary",
+      "title": "Plan Summary",
+      "type": "dialogue",
+      "text": "Great! We’ll meet every {{user.sessionDays}} at {{user.sessionTime}} until {{user.quitDate}}. Until then, smoke as normal and complete the short homework after each chat.",
+      "next": [
+        { "target": "preCourseInstruction" }
+      ]
+    },
+    {
+      "id": "preCourseInstruction",
+      "title": "Key Instructions",
+      "type": "explanation",
+      "text": "Do NOT try to cut down yet. Just observe each cigarette. Keep an open mind. You are not giving anything up—you’re escaping.",
+      "next": [
+        { "target": "sessionRouter" }
+      ]
+    },
+    {
+      "id": "sessionRouter",
+      "title": "Session Router",
+      "type": "decision",
+      "next": [
+        { "target": "preQuitStart", "condition": "user.daysToQuit > 0" },
+        { "target": "quitDayStart", "condition": "user.daysToQuit === 0" },
+        { "target": "postQuitStart", "condition": "user.daysSinceQuit > 0" }
+      ]
+    },
+
+    /* ---------- PRE-QUIT DAILY FLOW ---------- */
+    {
+      "id": "preQuitStart",
+      "title": "Day {{session.dayNumber}} Check-in",
+      "type": "dialogue",
+      "text": "Welcome back! {{user.daysToQuit}} day(s) until quit day. Let’s see how you feel.",
+      "next": [
+        { "target": "preQuitMoodForm" }
+      ]
+    },
+    {
+      "id": "preQuitMoodForm",
+      "title": "Mood & Craving",
+      "type": "form",
+      "text": "Mood (1-10) ❘ Stress (1-10) ❘ Craving after last cigarette (1-10)",
+      "next": [
+        { "target": "topicSelector", "condition": "form.completed === true" }
+      ]
+    },
+    {
+      "id": "topicSelector",
+      "title": "Select Topic",
+      "type": "decision",
+      "next": [
+        { "target": "topicAddictionCycle",      "condition": "session.topicIndex === 0" },
+        { "target": "topicNicotineWithdrawal", "condition": "session.topicIndex === 1" },
+        { "target": "topicEnjoymentMyth",      "condition": "session.topicIndex === 2" },
+        { "target": "topicStressMyth",         "condition": "session.topicIndex === 3" },
+        { "target": "topicWeightMyth",         "condition": "session.topicIndex === 4" },
+        { "target": "topicConcentrationMyth",  "condition": "session.topicIndex === 5" },
+        { "target": "personalReasonA",         "condition": "session.topicIndex === 6 && user.reasons[0]" },
+        { "target": "personalReasonB",         "condition": "session.topicIndex === 7 && user.reasons[1]" },
+        { "target": "personalReasonC",         "condition": "session.topicIndex === 8 && user.reasons[2]" }
+      ]
+    },
+
+    /* ---- Core Demystification Topics ---- */
+    {
+      "id": "topicAddictionCycle",
+      "title": "The Nicotine Cycle",
+      "type": "explanation",
+      "text": "Nicotine creates a tiny withdrawal pang; you smoke for relief and restart the loop. Understanding this breaks its power.",
+      "next": [ { "target": "homeworkCigLog" } ]
+    },
+    {
+      "id": "topicNicotineWithdrawal",
+      "title": "Withdrawal Demystified",
+      "type": "explanation",
+      "text": "Physical withdrawal is mild—like hunger. Fear magnifies it. We’ll shrink that fear today.",
+      "next": [ { "target": "homeworkCigLog" } ]
+    },
+    {
+      "id": "topicEnjoymentMyth",
+      "title": "Myth: I Enjoy Smoking",
+      "type": "explanation",
+      "text": "The ‘pleasure’ is just momentary relief from withdrawal. Real enjoyment returns when you’re free.",
+      "next": [ { "target": "homeworkCigLog" } ]
+    },
+    {
+      "id": "topicStressMyth",
+      "title": "Myth: Smoking Relieves Stress",
+      "type": "explanation",
+      "text": "Nicotine actually raises baseline stress. Freedom will lower it.",
+      "next": [ { "target": "homeworkCigLog" } ]
+    },
+    {
+      "id": "topicWeightMyth",
+      "title": "Myth: I’ll Gain Weight",
+      "type": "explanation",
+      "text": "Weight gain is caused by substitution. When you understand the trap, you won’t need substitutes.",
+      "next": [ { "target": "homeworkCigLog" } ]
+    },
+    {
+      "id": "topicConcentrationMyth",
+      "title": "Myth: Smoking Helps Concentration",
+      "type": "explanation",
+      "text": "True focus improves when the brain isn’t distracted by nicotine cues.",
+      "next": [ { "target": "homeworkCigLog" } ]
+    },
+
+    /* ---- Personalised reasons (if supplied) ---- */
+    {
+      "id": "personalReasonA",
+      "title": "Your Reason A",
+      "type": "dialogue",
+      "conditions": ["user.reasons[0]"],
+      "text": "Let’s explore your first reason: {{user.reasons[0]}}. Imagine achieving it smoke-free.",
+      "next": [ { "target": "homeworkCigLog" } ]
+    },
+    {
+      "id": "personalReasonB",
+      "title": "Your Reason B",
+      "type": "dialogue",
+      "conditions": ["user.reasons[1]"],
+      "text": "About {{user.reasons[1]}}—notice how smoking undermines it.",
+      "next": [ { "target": "homeworkCigLog" } ]
+    },
+    {
+      "id": "personalReasonC",
+      "title": "Your Reason C",
+      "type": "dialogue",
+      "conditions": ["user.reasons[2]"],
+      "text": "Let’s reflect on {{user.reasons[2]}} and how freedom strengthens it.",
+      "next": [ { "target": "homeworkCigLog" } ]
+    },
+
+    /* ---- Homework & wrap-up ---- */
+    {
+      "id": "homeworkCigLog",
+      "title": "Homework: Cigarette Log",
+      "type": "homework",
+      "text": "For each cigarette today, jot time, situation, and taste (pleasant/neutral/awful).",
+      "metadata": { "homework": "cig_log" },
+      "next": [ { "target": "homeworkTrigger" } ]
+    },
+    {
+      "id": "homeworkTrigger",
+      "title": "Homework: Trigger Reflection",
+      "type": "homework",
+      "text": "List the top three triggers that made you light up today.",
+      "metadata": { "homework": "trigger_list" },
+      "next": [ { "target": "preQuitEnd" } ]
+    },
+    {
+      "id": "preQuitEnd",
+      "title": "Session Wrap-Up",
+      "type": "dialogue",
+      "text": "Great work today! See you tomorrow at {{user.sessionTime}}.",
+      "next": [ { "target": "sessionRouter" } ]
+    },
+
+    /* ---------- QUIT-DAY FLOW ---------- */
+    {
+      "id": "quitDayStart",
+      "title": "Quit Day Welcome",
+      "type": "dialogue",
+      "text": "Today is the day! First, smoke your *final* cigarette knowingly—then you will be free.",
+      "audio": "audio/quit_day_intro.mp3",
+      "next": [ { "target": "smokeFinalCigarette" } ]
+    },
+    {
+      "id": "smokeFinalCigarette",
+      "title": "Final Cigarette Ritual",
+      "type": "explanation",
+      "text": "Light the cigarette. Pay close attention to the taste and the smoke. Ask yourself, ‘What am I really getting?’",
+      "next": [ { "target": "quitInstructions" } ]
+    },
+    {
+      "id": "quitInstructions",
+      "title": "Instructions After Final Puff",
+      "type": "explanation",
+      "text": "Stub it out. Throw away remaining cigarettes and lighters. Smile—you are now a happy non-smoker.",
+      "next": [ { "target": "afterglowIntro" } ]
+    },
+    {
+      "id": "afterglowIntro",
+      "title": "The Afterglow",
+      "type": "dialogue",
+      "text": "Notice the relief of no longer needing to plan your next smoke. That feeling will grow.",
+      "next": [ { "target": "afterglow" } ]
+    },
+    {
+      "id": "afterglow",
+      "title": "Immediate Benefits",
+      "type": "explanation",
+      "text": "Within 20 minutes blood pressure drops. In 8 hours carbon-monoxide levels halve. Your body is healing already.",
+      "next": [ { "target": "postQuitStart" } ]
+    },
+
+    /* ---------- POST-QUIT DAILY FLOW ---------- */
+    {
+      "id": "postQuitStart",
+      "title": "Post-Quit Check-in Day {{user.daysSinceQuit}}",
+      "type": "dialogue",
+      "text": "How are you feeling as a non-smoker for {{user.daysSinceQuit}} day(s)?",
+      "next": [ { "target": "postQuitCheckForm" } ]
+    },
+    {
+      "id": "postQuitCheckForm",
+      "title": "Mood & Craving",
+      "type": "form",
+      "text": "Mood (1-10) ❘ Craving right now (0-10) ❘ Any slip-ups?",
+      "next": [
+        { "target": "relapseCheck", "condition": "form.completed === true" }
+      ]
+    },
+    {
+      "id": "relapseCheck",
+      "title": "Relapse Decision",
+      "type": "decision",
+      "next": [
+        { "target": "relapseSupport", "condition": "user.relapseDetected === true" },
+        { "target": "copingStrategy",  "condition": "user.relapseDetected === false" }
+      ]
+    },
+    {
+      "id": "relapseSupport",
+      "title": "Bounce Back",
+      "type": "dialogue",
+      "text": "A slip doesn’t restart the trap unless you light the *next* one. Review why it tasted foul and move on smoke-free.",
+      "next": [ { "target": "copingStrategy" } ]
+    },
+    {
+      "id": "copingStrategy",
+      "title": "Coping Toolkit",
+      "type": "explanation",
+      "text": "Drink water, deep-breathe, stretch. Remind yourself: cravings pass quickly—they are signs of recovery.",
+      "next": [
+        { "target": "celebrate24h",   "condition": "user.daysSinceQuit === 1"  },
+        { "target": "celebrate3Days", "condition": "user.daysSinceQuit === 3"  },
+        { "target": "celebrate1Week", "condition": "user.daysSinceQuit === 7"  },
+        { "target": "celebrate2Weeks","condition": "user.daysSinceQuit === 14" },
+        { "target": "celebrate1Month","condition": "user.daysSinceQuit === 30" },
+        { "target": "postQuitEnd" }
+      ]
+    },
+
+    /* ---- Milestone Celebrations ---- */
+    {
+      "id": "celebrate24h",
+      "title": "24 Hours Smoke-Free",
+      "type": "dialogue",
+      "text": "First full day! Nicotine is leaving for good.",
+      "next": [ { "target": "postQuitEnd" } ]
+    },
+    {
+      "id": "celebrate3Days",
+      "title": "72-Hour Milestone",
+      "type": "dialogue",
+      "text": "Cravings have peaked and will diminish rapidly.",
+      "next": [ { "target": "postQuitEnd" } ]
+    },
+    {
+      "id": "celebrate1Week",
+      "title": "One Week!",
+      "type": "dialogue",
+      "text": "Taste buds sharper, energy up. Enjoy your freedom.",
+      "next": [ { "target": "postQuitEnd" } ]
+    },
+    {
+      "id": "celebrate2Weeks",
+      "title": "Two Weeks",
+      "type": "dialogue",
+      "text": "Breathing easier, stress baseline lower.",
+      "next": [ { "target": "postQuitEnd" } ]
+    },
+    {
+      "id": "celebrate1Month",
+      "title": "One Month",
+      "type": "dialogue",
+      "text": "A whole month free! Treat yourself with the money saved.",
+      "next": [ { "target": "maintainFreedom" } ]
+    },
+
+    {
+      "id": "postQuitEnd",
+      "title": "Session Wrap",
+      "type": "dialogue",
+      "text": "Great progress. See you at the next check-in.",
+      "next": [ { "target": "sessionRouter" } ]
+    },
+
+    /* ---------- MAINTENANCE & FINAL ---------- */
+    {
+      "id": "maintainFreedom",
+      "title": "Maintaining Freedom",
+      "type": "explanation",
+      "text": "Remember: there is no such thing as ‘just one’. Guard your freedom and enjoy life unclouded.",
+      "next": [
+        { "target": "finalSession", "condition": "user.daysSinceQuit >= 60" },
+        { "target": "sessionRouter" }
+      ]
+    },
+    {
+      "id": "finalSession",
+      "title": "You Are Free",
+      "type": "dialogue",
+      "text": "Congratulations! You’ve completed the Easy Way journey. Share your story to inspire others and live smoke-free forever.",
+      "next": []
+    }
+  ]
+}
